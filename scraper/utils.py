@@ -18,7 +18,7 @@ KEYWORDS = [
     "Matplotlib",
     "Seaborn",
     "Scikit-learn",
-    "R",
+    " R ",
     "SQL",
     "Java",
     "Scala",
@@ -65,6 +65,7 @@ def interceptor(request):
 
 def get_webdriver() -> webdriver.Chrome:
     options = Options()
+    options.add_argument("--headless=new")
     driver = webdriver.Chrome(options=options)
     driver.request_interceptor = interceptor
     return driver
