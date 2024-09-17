@@ -1,6 +1,11 @@
+import logging
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from scraper.utils import find_keywords, KEYWORDS, Vacancy, load_more_items
+from scraper.utils import KEYWORDS, Vacancy, load_more_items
+
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 
 
 def scrape_all_vacancies(driver, url: str) -> list[str]:
@@ -28,7 +33,7 @@ def scrape_detail_vacancy(driver, url: str) -> Vacancy:
         title = driver.find_element(By.CSS_SELECTOR, "h1").text
     except NoSuchElementException:
         title = None
-        print(f"Title not found for vacancy {url}")
+        logging.warning(f"Title not found for vacancy {url}")
 
     try:
         description = driver.find_element(
@@ -36,7 +41,7 @@ def scrape_detail_vacancy(driver, url: str) -> Vacancy:
         ).text
     except NoSuchElementException:
         description = ""
-        print(f"Description not found for vacancy {url}")
+        logging.warning(f"Description not found for vacancy {url}")
 
     try:
         company_name = driver.find_element(
@@ -44,20 +49,20 @@ def scrape_detail_vacancy(driver, url: str) -> Vacancy:
         ).text
     except NoSuchElementException:
         company_name = None
-        print(f"Company name not found for vacancy {url}")
+        logging.warning(f"Company name not found for vacancy {url}")
 
     try:
         date = driver.find_element(By.CSS_SELECTOR, "div.date").text
     except NoSuchElementException:
         date = None
-        print(f"Date not found for vacancy {url}")
+        logging.warning(f"Date not found for vacancy {url}")
 
     try:
         location_element = driver.find_elements(By.CSS_SELECTOR, "div.sh-info > span")
         location = location_element[0].text.split(", ") if location_element else None
     except NoSuchElementException:
         location = None
-        print(f"Location not found for vacancy {url}")
+        logging.warning(f"Location not found for vacancy {url}")
 
     try:
         salary = (
@@ -67,9 +72,10 @@ def scrape_detail_vacancy(driver, url: str) -> Vacancy:
         )
     except NoSuchElementException:
         salary = None
-        print(f"Salary not found for vacancy {url}")
+        logging.warning(f"Salary not found for vacancy {url}")
 
-    keywords_found = find_keywords(description, KEYWORDS)
+    # Use set intersection for faster keyword search
+    keywords_found = list(set(KEYWORDS).intersection(set(description.lower().split())))
 
     return Vacancy(
         title=title,

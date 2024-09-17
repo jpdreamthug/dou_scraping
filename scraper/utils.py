@@ -82,12 +82,3 @@ def load_more_items(driver) -> bool:
         return True
     except Exception:
         return False
-
-
-def find_keywords(description: str, keywords: list[str]) -> list[str]:
-    found = [
-        keyword
-        for keyword in keywords
-        if keyword.lower() in description.lower()
-    ]
-    return found

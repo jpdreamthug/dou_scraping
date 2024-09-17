@@ -1,5 +1,4 @@
 import csv
-from scraper.utils import Vacancy
 
 
 def save_vacancies_to_csv(vacancies, filename):
